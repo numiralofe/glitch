@@ -7,13 +7,11 @@ NOW=`date +%Y%m%d%H%M%S`
 TMPDIR=$NOW
 TMPRANDOM=$RANDOM
 
-TAG=$1 
+TAG=$1
 
 # SETTINGS
 RATIO=1280x1024
-enable_just_pixel_sort=0
-enable_just_byebyte=1
-enable_pixel_and_byebyte=0
+enable_just_pixel_sort=1
 enable_random=0
 FLIRCK_ENABLE=1
 QUEUE_ENABLE=1
@@ -30,7 +28,6 @@ ANIMATIONS=$ROOT_PATH/files/animations
 QUEUE=$ROOT_PATH/files/queue
 
 ## TOOLS PATH
-BYEBYTE=$ROOT_PATH/tools/byebyte/index.js
 PIXELSORT=$ROOT_PATH/tools/pixelsort/pixelsort.py
 FLIRCK=$ROOT_PATH/tools/flickr/getfLirckpHoto.py
 
@@ -59,14 +56,14 @@ clean_tmp_files() {
 
 get_flirck_photos() {
 
-  
+
   if test $FLIRCK_ENABLE -eq 1
      then
 
         if [ -z "$TAG" ]; then
           echo "Flirck is enabled as a source stream, please pass a search tag parameter"
           echo " exiting gracefully from the script"
-          exit 
+          exit
         fi
 
        echo $LOOP
@@ -85,7 +82,7 @@ get_flirck_photos() {
 
 get_queue_photos() {
 
-  
+
   if test $QUEUE_ENABLE -eq 1
      then
      cp -fr $QUEUE/* $INPUT_FILES/
@@ -109,7 +106,7 @@ randomize() {
       ANIMATION_DELAY=240
       RND=120
      fi
-   
+
      if [ "$LOOP" -gt 15 -a "$LOOP" -lt 1 ]
       then
       LOOP=5
@@ -128,7 +125,7 @@ print_settings(){
   echo "     LOOP VALUE = $LOOP"
   echo "RANDOMIZE VALUE = $RND"
   echo "ANIMATION DELAY = $ANIMATION_DELAY"
-  echo "  --------------------------------- "  
+  echo "  --------------------------------- "
 }
 
 resize() {
@@ -144,7 +141,7 @@ resize() {
         do
           # Convert to the size we need
           convert $files -resize $RATIO! $files
-        done  
+        done
 
 }
 
@@ -171,22 +168,9 @@ transform() {
         echo "Processing $FILENAME file..."
 
         if test $enable_just_pixel_sort -eq 1
-           then   
-              # Transforms with pixel_sort
-              python3 $PIXELSORT -o $TMP_FILES/$seq-$FILENAME -i random -c $RND $file 
-           fi
-
-        if test $enable_just_byebyte -eq 1 
-           then  
-              # Transforms with byebyte
-              node $BYEBYTE -f $file -o $OUTPUT_FILES/$seq-$RANDOM-$FILENAME -t $RND
-           fi
-
-        if test $enable_pixel_and_byebyte -eq 1
            then
-              # Transforms with both pixel_sort and byebite
-              python3 $PIXELSORT -o $TMP_FILES/$seq-$FILENAME -i random -c $RND $file 
-              node $BYEBYTE -f $TMP_FILES/$seq-$FILENAME -o $OUTPUT_FILES/$seq-$RANDOM-$FILENAME -t $RND
+              # Transforms with pixel_sort
+              python3 $PIXELSORT -o $TMP_FILES/$seq-$FILENAME -i random -c $RND $file
            fi
 
       done
@@ -220,6 +204,3 @@ create_animation
 create_video
 archiveProcessed
 clean_tmp_files
-
-
-
