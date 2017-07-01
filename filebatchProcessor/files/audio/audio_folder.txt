@@ -1,0 +1,8 @@
+total 28
+drwxr-xr-x. 2 ferreiran ferreiran 4096 Feb  9 16:43 animations
+drwxrwxr-x. 2 ferreiran ferreiran 4096 Feb  9 16:43 input
+drwxrwxr-x. 2 ferreiran ferreiran 4096 Feb  9 16:43 output
+drwxr-xr-x. 2 ferreiran ferreiran 4096 Feb  9 16:43 processed
+drwxr-xr-x. 2 ferreiran ferreiran 4096 Feb  9 16:44 queue
+drwxr-xr-x. 2 ferreiran ferreiran 4096 Feb  9 16:44 tmp
+drwxr-xr-x. 2 ferreiran ferreiran 4096 Feb  9 18:18 audio

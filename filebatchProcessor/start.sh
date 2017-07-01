@@ -15,13 +15,15 @@ enable_just_pixel_sort=0
 enable_just_byebyte=1
 enable_pixel_and_byebyte=0
 enable_random=0
-FLIRCK_ENABLE=0
+FLIRCK_ENABLE=1
 QUEUE_ENABLE=1
+VIDEO_ENABLE=1
 
 # PATHS
 INPUT_FILES=$ROOT_PATH/files/input/$TMPDIR
 OUTPUT_FILES=$ROOT_PATH/files/output/$TMPDIR
 TMP_FILES=$ROOT_PATH/files/tmp/$TMPDIR
+AUDIO_FILES=$ROOT_PATH/files/audio/
 FILE_QUEUE=$ROOT_PATH/files/queue
 PROCESSED_FILES=$ROOT_PATH/files/processed
 ANIMATIONS=$ROOT_PATH/files/animations
@@ -32,7 +34,13 @@ BYEBYTE=$ROOT_PATH/tools/byebyte/index.js
 PIXELSORT=$ROOT_PATH/tools/pixelsort/pixelsort.py
 FLIRCK=$ROOT_PATH/tools/flickr/getfLirckpHoto.py
 
+
+
 ## CREATE TMP INPUT DIRS
+rm -fr $ROOT_PATH/files/input/*
+rm -fr $ROOT_PATH/files/output/*
+rm -fr $ROOT_PATH/files/tmp/*
+rm -fr $ROOT_PATH/files/queue/*
 mkdir -p $INPUT_FILES
 mkdir -p $OUTPUT_FILES
 mkdir -p $TMP_FILES
@@ -96,7 +104,8 @@ randomize() {
       RND=$(( 100 + $TMP_RND ))
       ANIMATION_DELAY=`echo $RND_STR | cut -d ';' -f 2`
     else
-      LOOP=15
+      ## Fall back to defaults
+      LOOP=10
       ANIMATION_DELAY=240
       RND=120
      fi
@@ -107,12 +116,6 @@ randomize() {
      fi
 }
 
-viewer() {
-	killall display
-	$(while true ; do for i in $OUTPUT_FILES/* ; do cp "$i" $ROOT_PATH/files/slideshow.jpg ; echo $i ; sleep 2 ; done ; done)&
-	viewnior $ROOT_PATH/files/slideshow.jpg
-
-}
 
 print_settings(){
   echo "  --------------------------------- "
@@ -147,8 +150,16 @@ resize() {
 
 create_animation() {
 
-
     convert -verbose -delay $ANIMATION_DELAY -loop $LOOP $OUTPUT_FILES/* $ANIMATIONS/$NOW.gif
+}
+
+create_video() {
+
+    if test $VIDEO_ENABLE -eq 1
+     then
+      ffmpeg -i $ANIMATIONS/$NOW.gif -i $AUDIO_FILES/*.wav -c:v libx264 -c:a aac -strict experimental -b:a 192k -shortest $ANIMATIONS/$NOW.mp4
+    fi
+
 }
 
 
@@ -206,10 +217,9 @@ get_flirck_photos
 create_sequence
 resize
 create_animation
+create_video
 archiveProcessed
 clean_tmp_files
 
-
-#$(eog $ROOT_PATH/motd.png)&
 
 
